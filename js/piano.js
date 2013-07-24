@@ -46,22 +46,9 @@ function startMotionCapture(){
 }
 
 function onKeyTap(frame, gesture){
-  var velocity;
-  var fingersLength  = frame.fingers.length;
-  for(var i=0; i<fingersLength; i++){
-    var finger = frame.fingers[i];
-    if(finger.id == gesture.pointableIds[0]){
-      velocity = finger.tipVelocity[1];
-      break;
-    }
-  }
-
-  var volume = velocity / 1000 * 128;
-  if(volume < 0)   { volume = 0; }
-  if(volume > 128) { volume = 128; }
-
-  var x = gesture.position[0] + 256;
-  var note = getNote(gesture)
+  var volume = getVolume(frame.fingers, gesture);
+  var x      = gesture.position[0] + 256;
+  var note   = getNote(gesture)
 
   $note.text(note);
   $volume.text(volume);
@@ -71,6 +58,26 @@ function onKeyTap(frame, gesture){
 
 function onSwipe(frame, gesture){
 
+}
+
+var maxVolume = 127;
+function getVolume(fingers, gesture){
+  var velocity, fingersLength  = fingers.length;
+  for(var i=0; i<fingersLength; i++){
+    var finger = fingers[i];
+    if(finger.id == gesture.pointableIds[0]){
+      velocity = finger.tipVelocity[1];
+      break;
+    }
+  }
+
+  if(isNaN(velocity)) { return maxVolume; }
+
+  var volume = velocity / 1000 * maxVolume;
+  if(volume < 0)         { volume = 0; }
+  if(volume > maxVolume) { volume = maxVolume; }
+
+  return volume;
 }
 
 function getNote(gesture){
