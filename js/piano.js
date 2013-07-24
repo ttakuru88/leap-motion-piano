@@ -49,24 +49,24 @@ function onKeyTap(frame, gesture){
   var volume = getVolume(frame.fingers, gesture);
   var note   = getNote(gesture)
 
-  $note.text(note);
-  $volume.text(volume);
-
   play(note, volume);
 }
 
 var prevNote;
 function onSwipe(frame, gesture){
-  var note = getNote(gesture);
+  var volume = getVolume(frame.fingers, gesture, 5);
+  var note   = getNote(gesture);
 
   if(prevNote != note){
-    play(note, maxVolume);
+    play(note, volume);
     prevNote = note;
   }
 }
 
 var maxVolume = 127;
-function getVolume(fingers, gesture){
+function getVolume(fingers, gesture, weight){
+  weight = weight || 1;
+
   var velocity, fingersLength  = fingers.length;
   for(var i=0; i<fingersLength; i++){
     var finger = fingers[i];
@@ -78,10 +78,11 @@ function getVolume(fingers, gesture){
 
   if(isNaN(velocity)) { return maxVolume; }
 
-  var volume = velocity / 1000 * maxVolume;
+  var volume = velocity / 1000 * maxVolume * weight;
   if(volume < 0)         { volume = 0; }
   if(volume > maxVolume) { volume = maxVolume; }
 
+  $volume.text(volume);
   return volume;
 }
 
@@ -98,4 +99,6 @@ function play(note, volume){
   MIDI.noteOff(channel, note, 1);
   channel++;
   if(channel >= 7) { channel = 0; }
+
+  $note.text(note);
 }
