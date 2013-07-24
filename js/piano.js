@@ -81,6 +81,7 @@ function onCircle(frame, gesture){
 
   if(!nextPlayTime || nextPlayTime < time){
     play(note, maxVolume, duration / 1000);
+    play(note-12, maxVolume / 2, duration / 1000);
 
     nextPlayTime = time + duration;
 
