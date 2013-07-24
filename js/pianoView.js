@@ -32,22 +32,20 @@ var Piano = (function(){
 
   Piano.prototype.play = function(note){
     if(this.prevNote){
-      this.ctx.save();
-      this.ctx.fillStyle = '#ffffff';
-      this.ctx.beginPath();
-      this.ctx.arc(this.keyWidth * this.prevNote + this.keyWidth / 2, this.canvas.height - this.keyWidth, this.keyWidth * 0.4, 0, 2 * Math.PI);
-      this.ctx.fill();
-      this.ctx.restore();
+      this.drawArc(this.prevNote, '#ffffff', this.keyWidth * 0.4);
     }
 
+    this.drawArc(note, '#ff0000', this.keyWidth * 0.3);
+    this.prevNote = note;
+  }
+
+  Piano.prototype.drawArc = function(note, color, radius){
     this.ctx.save();
-    this.ctx.fillStyle = '#ff0000';
+    this.ctx.fillStyle = color;
     this.ctx.beginPath();
-    this.ctx.arc(this.keyWidth * note + this.keyWidth / 2, this.canvas.height - this.keyWidth, this.keyWidth * 0.3, 0, 2 * Math.PI);
+    this.ctx.arc(this.keyWidth * note + this.keyWidth / 2, this.canvas.height - this.keyWidth, radius, 0, 2 * Math.PI);
     this.ctx.fill();
     this.ctx.restore();
-
-    this.prevNote = note;
   }
 
   return Piano;
