@@ -13,9 +13,21 @@
 
  <script src="./js/lib/jquery-2.0.3.min.js"></script>
  <script src="./js/lib/leap.js"></script>
+ <script src="./js/pianoView.js"></script>
  <script src="./js/piano.js"></script>
+
+  <style>
+    #piano {
+      width: 1000px;
+      height: 300px;
+      outline: 1px solid #eaeaea;
+    }
+  </style>
 </head>
 <body>
+
+<canvas id="piano" width="2000" height="600"></canvas>
+
 <p id="x"></p>
 <p id="note"></p>
 <p id="volume"></p>

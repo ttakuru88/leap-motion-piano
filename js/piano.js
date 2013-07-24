@@ -2,6 +2,7 @@ window.onload = function () {
   $x      = $('#x');
   $note   = $('#note');
   $volume = $('#volume');
+  pianoView = new Piano('piano');
 
   MIDI.loadPlugin({
     soundfontUrl: "./soundfont/",
@@ -13,15 +14,14 @@ window.onload = function () {
 };
 
           //  A    B    C    D    E    F    G
-var notes = [ 21,  23,  24,  26,  28,  29,  31,
+var notes = [
               33,  35,  36,  38,  40,  41,  43,
               45,  47,  48,  50,  52,  53,  55,
               57,  59,  60,  62,  64,  65,  67,
               69,  71,  72,  74,  76,  77,  79,
-              81,  83,  84,  86,  88,  89,  91,
-              93,  95,  96,  98, 100, 101, 103,
-             105, 107, 108 ]
-var $x, $note, $volume;
+              81,  83,  84,  86,  88,  89,  91
+            ]
+var $x, $note, $volume, pianoView;
 
 function startMotionCapture(){
   var controller = new Leap.Controller({enableGestures: true});
@@ -125,5 +125,6 @@ function play(note, volume, duration){
     MIDI.noteOff(0, note, duration)
   }
 
+  pianoView.play(notes.indexOf(note));
   $note.text(note);
 }
