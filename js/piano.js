@@ -10,8 +10,6 @@ window.onload = function () {
 
 function startMotionCapture(){
   var controller = new Leap.Controller({enableGestures: true});
-  var channel = 0;
-
             //  A    B    C    D    E    F    G
   var notes = [ 21,  23,  24,  26,  28,  29,  31,
                 33,  35,  36,  38,  40,  41,  43,
@@ -60,10 +58,7 @@ function startMotionCapture(){
         $note.text(note);
         $volume.text(volume);
 
-        MIDI.noteOn(channel, note, volume, 0);
-        MIDI.noteOff(channel, note, 1);
-        channel++;
-        if(channel >= 7) { channel = 0; }
+        play(note, volume);
 
         break;
       case 'swipe':
@@ -72,4 +67,12 @@ function startMotionCapture(){
       }
     }
   });
+}
+
+var channel = 0;
+function play(note, volume){
+  MIDI.noteOn(channel, note, volume, 0);
+  MIDI.noteOff(channel, note, 1);
+  channel++;
+  if(channel >= 7) { channel = 0; }
 }
