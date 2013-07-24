@@ -34,40 +34,44 @@ function startMotionCapture(){
     if(!frame.gestures.length) { return; }
 
     var gesturesLength = frame.gestures.length;
-    var fingersLength  = frame.fingers.length;
-    for(i=0; i<gesturesLength; i++){
+    for(var i=0; i<gesturesLength; i++){
       var gesture = frame.gestures[i]
 
       switch(gesture.type){
-      case 'keyTap':
-        var velocity;
-        for(var j=0; j<fingersLength; j++){
-          var finger = frame.fingers[j];
-          if(finger.id == gesture.pointableIds[0]){
-            velocity = finger.tipVelocity[1];
-            break;
-          }
-        }
-
-        var volume = velocity / 1000 * 128;
-        if(volume < 0)   { volume = 0; }
-        if(volume > 128) { volume = 128; }
-
-        var x = gesture.position[0] + 256;
-        var keyWidth = 512 / notes.length;
-        var note = notes[~~(x / keyWidth)];
-
-        $note.text(note);
-        $volume.text(volume);
-
-        play(note, volume);
-
-        break;
-      case 'swipe':
-        break;
+        case 'keyTap': onKeyTap(frame, gesture); break;
+        case 'swipe':  onSwipe(frame, gesture);  break;
       }
     }
   });
+}
+
+function onKeyTap(frame, gesture){
+  var velocity;
+  var fingersLength  = frame.fingers.length;
+  for(var i=0; i<fingersLength; i++){
+    var finger = frame.fingers[i];
+    if(finger.id == gesture.pointableIds[0]){
+      velocity = finger.tipVelocity[1];
+      break;
+    }
+  }
+
+  var volume = velocity / 1000 * 128;
+  if(volume < 0)   { volume = 0; }
+  if(volume > 128) { volume = 128; }
+
+  var x = gesture.position[0] + 256;
+  var keyWidth = 512 / notes.length;
+  var note = notes[~~(x / keyWidth)];
+
+  $note.text(note);
+  $volume.text(volume);
+
+  play(note, volume);
+}
+
+function onSwipe(frame, gesture){
+
 }
 
 var channel = 0;
