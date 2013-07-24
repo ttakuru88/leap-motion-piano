@@ -93,12 +93,8 @@ function getNote(gesture){
   return notes[~~(x / keyWidth)];
 }
 
-var channel = 0;
 function play(note, volume){
-  MIDI.noteOn(channel, note, volume, 0);
-  MIDI.noteOff(channel, note, 1);
-  channel++;
-  if(channel >= 7) { channel = 0; }
+  MIDI.noteOn(0, note, volume, 0);
 
   $note.text(note);
 }
