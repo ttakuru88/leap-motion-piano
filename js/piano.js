@@ -1,0 +1,54 @@
+window.onload = function () {
+  MIDI.loadPlugin({
+    soundfontUrl: "./soundfont/",
+    instrument: "acoustic_grand_piano",
+    callback: function() {
+      MIDI.setVolume(0, 127);
+      startMotionCapture();
+    }
+  });
+};
+
+function startMotionCapture(){
+  var controller = new Leap.Controller({enableGestures: true});
+  var channel = 0;
+
+            //  A    B    C    D    E    F    G
+  var notes = [ 21,  23,  24,  26,  28,  29,  31,
+                33,  35,  36,  38,  40,  41,  43,
+                45,  47,  48,  50,  52,  53,  55,
+                57,  59,  60,  62,  64,  65,  67,
+                69,  71,  72,  74,  76,  77,  79,
+                81,  83,  84,  86,  88,  89,  91,
+                93,  95,  96,  98, 100, 101, 103,
+               105, 107, 108 ]
+
+  var $x    = $('#x');
+  var $note = $('#note');
+
+  controller.loop(function(frame){
+    if(frame.fingers.length){
+      $x.text(frame.fingers[0].tipPosition[0]);
+    }
+
+    if(!frame.gestures.length) { return; }
+
+    var i, len = frame.gestures.length;
+    for(i=0; i<len; i++){
+      var gesture = frame.gestures[i]
+      if(gesture.type != 'keyTap'){ continue; }
+
+      var x = gesture.position[0] + 256;
+      var keyWidth = 512 / notes.length;
+      var note = notes[~~(x / keyWidth)];
+
+      $note.text(note);
+
+      MIDI.noteOn(channel, note, 127, 0);
+      MIDI.noteOff(channel, note, 1);
+
+      channel++;
+      if(channel >= 7) { channel = 0; }
+    }
+  });
+}
