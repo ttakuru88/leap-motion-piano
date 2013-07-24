@@ -39,7 +39,7 @@ function startMotionCapture(){
 
       switch(gesture.type){
         case 'keyTap': onKeyTap(frame, gesture); break;
-        case 'swipe':  onSwipe(frame, gesture);  break;
+        case 'swipe':  onSwipe(frame, gesture);  return;
       }
     }
   });
@@ -47,7 +47,6 @@ function startMotionCapture(){
 
 function onKeyTap(frame, gesture){
   var volume = getVolume(frame.fingers, gesture);
-  var x      = gesture.position[0] + 256;
   var note   = getNote(gesture)
 
   $note.text(note);
@@ -56,8 +55,14 @@ function onKeyTap(frame, gesture){
   play(note, volume);
 }
 
+var prevNote;
 function onSwipe(frame, gesture){
+  var note = getNote(gesture);
 
+  if(prevNote != note){
+    play(note, maxVolume);
+    prevNote = note;
+  }
 }
 
 var maxVolume = 127;
