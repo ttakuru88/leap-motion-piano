@@ -61,8 +61,7 @@ function onKeyTap(frame, gesture){
   if(volume > 128) { volume = 128; }
 
   var x = gesture.position[0] + 256;
-  var keyWidth = 512 / notes.length;
-  var note = notes[~~(x / keyWidth)];
+  var note = getNote(gesture)
 
   $note.text(note);
   $volume.text(volume);
@@ -72,6 +71,13 @@ function onKeyTap(frame, gesture){
 
 function onSwipe(frame, gesture){
 
+}
+
+function getNote(gesture){
+  var x = gesture.position[0] + 256;
+  var keyWidth = 512 / notes.length;
+
+  return notes[~~(x / keyWidth)];
 }
 
 var channel = 0;
