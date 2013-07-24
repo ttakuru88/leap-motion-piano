@@ -31,7 +31,14 @@ var Piano = (function(){
   }
 
   Piano.prototype.play = function(note){
-    this.renderKeys();
+    if(this.prevNote){
+      this.ctx.save();
+      this.ctx.fillStyle = '#ffffff';
+      this.ctx.beginPath();
+      this.ctx.arc(this.keyWidth * this.prevNote + this.keyWidth / 2, this.canvas.height - this.keyWidth, this.keyWidth * 0.4, 0, 2 * Math.PI);
+      this.ctx.fill();
+      this.ctx.restore();
+    }
 
     this.ctx.save();
     this.ctx.fillStyle = '#ff0000';
@@ -39,6 +46,8 @@ var Piano = (function(){
     this.ctx.arc(this.keyWidth * note + this.keyWidth / 2, this.canvas.height - this.keyWidth, this.keyWidth * 0.3, 0, 2 * Math.PI);
     this.ctx.fill();
     this.ctx.restore();
+
+    this.prevNote = note;
   }
 
   return Piano;
