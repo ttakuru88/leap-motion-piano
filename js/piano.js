@@ -40,6 +40,7 @@ function startMotionCapture(){
       switch(gesture.type){
         case 'keyTap': onKeyTap(frame, gesture); break;
         case 'swipe':  onSwipe(frame, gesture);  return;
+        case 'circle': onCircle(frame, gesture); return;
       }
     }
   });
@@ -60,6 +61,31 @@ function onSwipe(frame, gesture){
   if(prevNote != note){
     play(note, volume);
     prevNote = note;
+  }
+}
+
+var score = [[72, 500], [72, 500], [79, 500], [79, 500], [81, 500], [81, 500], [79, 500], [79, 500],
+             [77, 500], [77, 500], [76, 500], [76, 500], [74, 500], [74, 375], [76, 125], [72, 1000],
+             [79, 500], [79, 500], [77, 500], [77, 500], [76, 500], [76, 500], [74, 500], [74, 500],
+             [79, 500], [79, 500], [77, 500], [77, 500], [76, 350], [77, 50], [76, 50], [74, 50], [76, 375], [77, 125], [76, 500], [74, 500],
+             [72, 500], [72, 500], [79, 500], [79, 500], [81, 500], [81, 500], [79, 500], [79, 500],
+             [77, 500], [77, 500], [76, 500], [76, 500], [74, 350], [76, 50], [74, 50], [72, 50], [74, 375], [76, 125], [72, 1000]];
+
+var currentNote = 0;
+var nextPlayTime;
+function onCircle(frame, gesture){
+  var note     = score[currentNote][0];
+  var duration = score[currentNote][1];
+
+  var time = +new Date;
+
+  if(!nextPlayTime || nextPlayTime < time){
+    play(note, maxVolume, duration / 1000);
+
+    nextPlayTime = time + duration;
+
+    currentNote++;
+    if(currentNote >= score.length){ currentNote = 0; }
   }
 }
 
@@ -93,8 +119,11 @@ function getNote(gesture){
   return notes[~~(x / keyWidth)];
 }
 
-function play(note, volume){
+function play(note, volume, duration){
   MIDI.noteOn(0, note, volume, 0);
+  if(duration){
+    MIDI.noteOff(0, note, duration)
+  }
 
   $note.text(note);
 }
