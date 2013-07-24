@@ -3,7 +3,6 @@ window.onload = function () {
     soundfontUrl: "./soundfont/",
     instrument: "acoustic_grand_piano",
     callback: function() {
-      MIDI.setVolume(0, 127);
       startMotionCapture();
     }
   });
@@ -25,6 +24,7 @@ function startMotionCapture(){
 
   var $x    = $('#x');
   var $note = $('#note');
+  var $volume = $('#volume');
 
   controller.loop(function(frame){
     if(frame.fingers.length){
@@ -33,18 +33,33 @@ function startMotionCapture(){
 
     if(!frame.gestures.length) { return; }
 
-    var i, len = frame.gestures.length;
-    for(i=0; i<len; i++){
+    var gesturesLength = frame.gestures.length;
+    var fingersLength  = frame.fingers.length;
+    for(i=0; i<gesturesLength; i++){
       var gesture = frame.gestures[i]
       if(gesture.type != 'keyTap'){ continue; }
+
+      var velocity;
+      for(var j=0; j<fingersLength; j++){
+        var finger = frame.fingers[j];
+        if(finger.id == gesture.pointableIds[0]){
+          velocity = finger.tipVelocity[1];
+          break;
+        }
+      }
+
+      var volume = velocity / 1000 * 128;
+      if(volume < 0)   { volume = 0; }
+      if(volume > 128) { volume = 128; }
 
       var x = gesture.position[0] + 256;
       var keyWidth = 512 / notes.length;
       var note = notes[~~(x / keyWidth)];
 
       $note.text(note);
+      $volume.text(volume);
 
-      MIDI.noteOn(channel, note, 127, 0);
+      MIDI.noteOn(channel, note, volume, 0);
       MIDI.noteOff(channel, note, 1);
 
       channel++;
