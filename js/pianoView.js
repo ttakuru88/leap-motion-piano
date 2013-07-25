@@ -17,7 +17,7 @@ var PianoView = (function(){
     this.ctx.fillStyle   = '#000';
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    for(var i=0; i<keyNum; i++){
+    for(var i=1; i<keyNum; i++){
       var x = i * this.keyWidth;
 
       this.ctx.beginPath();

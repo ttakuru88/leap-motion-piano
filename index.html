@@ -18,15 +18,27 @@
   <script src="./js/score_generator.js"></script>
 
   <style>
+    body{
+      background-color: #eaeaea;
+    }
+
+    #canvas-wrapper{
+      width: 100%;
+      text-align: center;
+    }
     #piano {
       width: 1000px;
       height: 200px;
-      outline: 1px solid #eaeaea;
+      outline: 1px solid black;
+      background: white;
     }
   </style>
 </head>
 <body>
+<div id="canvas-wrapper">
+  <h1>Leap Motion Piano</h1>
+  <canvas id="piano" width="2000" height="400"></canvas>
+</div>
 
-<canvas id="piano" width="2000" height="400"></canvas>
 </body>
 </html>
