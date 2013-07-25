@@ -9,12 +9,12 @@ var MainActivity = (function(){
       root.piano     = new Piano();
       root.pianoView = new PianoView('piano');
 
-      root.piano.addPlayListener(function(note){
-        root.pianoView.play(note);
+      root.piano.addPlayListener(function(note, isSharp){
+        root.pianoView.play(note, isSharp);
       });
 
-      root.piano.addPlayEndListener(function(note){
-        root.pianoView.playEnd(note);
+      root.piano.addPlayEndListener(function(note, isSharp){
+        root.pianoView.playEnd(note, isSharp);
       });
 
       MIDI.loadPlugin({
