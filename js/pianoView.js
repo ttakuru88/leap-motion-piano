@@ -1,5 +1,5 @@
 var PianoView = (function(){
-  var keyNum = 35;
+  var keyNum = 34;
   var halfNote = [true, false, true, true, false, true, true];
 
   function PianoView(id){
