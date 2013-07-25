@@ -29,12 +29,11 @@ var MainActivity = (function(){
 
   MainActivity.prototype.startMotionCapture = function(){
     var root = this, i;
-    var controller = new Leap.Controller({enableGestures: true});
     var playingNotes = [];
     var resetCircleGestureCount = null;
     var circleGestureCount = 0;
 
-    controller.loop(function(frame){
+    Leap.loop({enableGestures: true}, function(frame){
       var fingersLength = frame.fingers.length;
       var played = false;
       if(fingersLength){
