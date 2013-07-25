@@ -1,6 +1,9 @@
 var MainActivity = (function(){
+  var resetCircleGestureCountInterval = 500;
+
   function MainActivity(){
     root = this;
+    this.delay = null;
 
     window.onload = function () {
       root.piano     = new Piano();
@@ -28,6 +31,8 @@ var MainActivity = (function(){
     var root = this, i;
     var controller = new Leap.Controller({enableGestures: true});
     var playingNotes = [];
+    var resetCircleGestureCount = null;
+    var circleGestureCount = 0;
 
     controller.loop(function(frame){
       var fingersLength = frame.fingers.length;
@@ -48,7 +53,19 @@ var MainActivity = (function(){
         for(i=0; i<gesturesLength; i++){
           var gesture = frame.gestures[i]
           switch(gesture.type){
-            case 'circle': root.piano.autoPlay(); return;
+            case 'circle':
+              clearTimeout(resetCircleGestureCount);
+              circleGestureCount++;
+
+              if(circleGestureCount > 100){
+                root.piano.autoPlay();
+              }
+
+              resetCircleGestureCount = setTimeout(function(){
+                circleGestureCount = 0;
+              }, resetCircleGestureCountInterval);
+
+              return;
           }
         }
       }
