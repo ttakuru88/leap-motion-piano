@@ -23,19 +23,25 @@ var Piano = (function(){
 
   Piano.prototype.onMoveFinger = function(finger){
     if(finger.tipPosition[1] > keyboardTop) {
-      this.playingNotes[finger.id] = null;
-      return;
+      this.playEnd(finger.id);
+      return false;
+    }
+    if(finger.tipVelocity[1] > 0){ // 上への移動
+      return true;
     }
 
     var volume = this.getVolume(finger);
-    if(volume !== null){
-      var note = this.getNote(finger);
-      if(this.playingNotes[finger.id] === note){ return; }
+    if(volume === null){ return false; }
 
-      this.playingNotes[finger.id] = note;
+    var note = this.getNote(finger);
+    if(this.playingNotes[finger.id] === note){ return true; }
 
-      this.play(note, volume);
-    }
+    this.playEnd(finger.id);
+    this.playingNotes[finger.id] = note;
+
+    this.play(note, volume);
+
+    return true;
   }
 
   Piano.prototype.getVolume = function(finger){
@@ -66,8 +72,29 @@ var Piano = (function(){
     if(this.onPlay) { this.onPlay(notes.indexOf(note)); }
   }
 
+  Piano.prototype.playEnd = function(fingerId){
+    var note = this.playingNotes[fingerId];
+    if(!note){ return; }
+
+    MIDI.noteOff(0, note, 0);
+
+    this.playingNotes.splice(fingerId, 1);
+
+    if(this.onPlayEnd) { this.onPlayEnd(notes.indexOf(note)); }
+  }
+
+  Piano.prototype.allPlayEnd = function(){
+    for(var index in this.playingNotes){
+      this.playEnd(index);
+    }
+  }
+
   Piano.prototype.addPlayListener = function(callback){
     this.onPlay = callback;
+  }
+
+  Piano.prototype.addPlayEndListener = function(callback){
+    this.onPlayEnd = callback;
   }
 
   Piano.prototype.autoPlay = function(){

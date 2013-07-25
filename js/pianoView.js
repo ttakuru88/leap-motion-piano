@@ -31,12 +31,12 @@ var PianoView = (function(){
   }
 
   PianoView.prototype.play = function(note){
-    if(this.prevNote){
-      this.drawArc(this.prevNote, '#ffffff', this.keyWidth * 0.4);
-    }
-
     this.drawArc(note, '#ff0000', this.keyWidth * 0.3);
     this.prevNote = note;
+  }
+
+  PianoView.prototype.playEnd = function(note){
+    this.drawArc(note, '#ffffff', this.keyWidth * 0.4);
   }
 
   PianoView.prototype.drawArc = function(note, color, radius){

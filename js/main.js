@@ -10,6 +10,10 @@ var MainActivity = (function(){
         root.pianoView.play(note);
       });
 
+      root.piano.addPlayEndListener(function(note){
+        root.pianoView.playEnd(note);
+      });
+
       MIDI.loadPlugin({
         soundfontUrl: "./soundfont/",
         instrument: "acoustic_grand_piano",
@@ -27,11 +31,16 @@ var MainActivity = (function(){
 
     controller.loop(function(frame){
       var fingersLength = frame.fingers.length;
+      var played = false;
       if(fingersLength){
         for(i=0; i<fingersLength; i++){
           var finger = frame.fingers[i];
-          root.piano.onMoveFinger(finger);
+          played = root.piano.onMoveFinger(finger);
         }
+      }
+
+      if(!played){
+        root.piano.allPlayEnd();
       }
 
       var gesturesLength = frame.gestures.length;
