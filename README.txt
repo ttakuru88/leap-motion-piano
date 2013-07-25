@@ -3,5 +3,5 @@
 leap.js
 https://github.com/leapmotion/leapjs
 
-midi.js
+MIDI.js
 http://mudcu.be/midi-js/
