@@ -40,10 +40,11 @@ var MainActivity = (function(){
       if(fingersLength){
         for(i=0; i<fingersLength; i++){
           var finger = frame.fingers[i];
-          played = root.piano.onMoveFinger(finger);
+          if(root.piano.onMoveFinger(finger) && !played){
+            played = true;
+          }
         }
       }
-
       if(!played){
         root.piano.allPlayEnd();
       }
