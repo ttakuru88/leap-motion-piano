@@ -37,9 +37,7 @@ var Piano = (function(){
     if(this.playingNotes[finger.id] === note){ return true; }
 
     this.playEnd(finger.id);
-    this.playingNotes[finger.id] = note;
-
-    this.play(note, volume);
+    this.play(finger.id, note, volume);
 
     return true;
   }
@@ -63,10 +61,15 @@ var Piano = (function(){
     return notes[~~(x / keyWidth)];
   }
 
-  Piano.prototype.play = function(note, volume, duration){
-    MIDI.noteOn(0, note, volume, 0);
+  Piano.prototype.play = function(fingerId, note, volume, duration, channel){
+    var root = this;
+    channel = channel || 0;
+
+    this.playingNotes[fingerId] = note;
+
+    MIDI.noteOn(channel, note, volume, 0);
     if(duration){
-      MIDI.noteOff(0, note, duration)
+      MIDI.noteOff(channel, note, duration);
     }
 
     if(this.onPlay) { this.onPlay(notes.indexOf(note)); }
@@ -104,8 +107,11 @@ var Piano = (function(){
     var time = +new Date;
 
     if(!this.nextPlayTime || this.nextPlayTime < time){
-      this.play(note, maxVolume, duration / 1000);
-      this.play(note-12, maxVolume / 2, duration / 1000);
+      this.playEnd(0);
+      this.play(0, note, maxVolume, duration / 1000, 1);
+
+      this.playEnd(1);
+      this.play(1, note-12, maxVolume / 2, duration / 1000, 1);
 
       this.nextPlayTime = time + duration;
 
