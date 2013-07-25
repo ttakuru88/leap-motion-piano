@@ -32,6 +32,7 @@ var MainActivity = (function(){
     var playingNotes = [];
     var resetCircleGestureCount = null;
     var circleGestureCount = 0;
+    var allPlayEndCount = 0;
 
     Leap.loop({enableGestures: true}, function(frame){
       var fingersLength = frame.fingers.length;
@@ -46,6 +47,14 @@ var MainActivity = (function(){
       }
       if(!played){
         root.piano.allPlayEnd();
+        allPlayEndCount++;
+        if(allPlayEndCount > 50){
+          root.pianoView.refresh();
+          allPlayEndCount = 0;
+        }
+      }
+      else{
+        allPlayEndCount = 0;
       }
 
       var gesturesLength = frame.gestures.length;

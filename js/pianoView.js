@@ -49,6 +49,11 @@ var PianoView = (function(){
     }
   }
 
+  PianoView.prototype.refresh = function(){
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.renderKeys();
+  }
+
   PianoView.prototype.drawArc = function(x, y, r, c){
     this.ctx.save();
     this.ctx.fillStyle = c;
