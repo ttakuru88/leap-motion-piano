@@ -1,5 +1,4 @@
 window.onload = function () {
-  $x      = $('#x');
   $note   = $('#note');
   $volume = $('#volume');
   pianoView = new Piano('piano');
@@ -21,47 +20,48 @@ var notes = [
               69,  71,  72,  74,  76,  77,  79,
               81,  83,  84,  86,  88,  89,  91
             ]
-var $x, $note, $volume, pianoView;
+var $note, $volume, pianoView;
+var keyboardTop = 150;
 
 function startMotionCapture(){
   var controller = new Leap.Controller({enableGestures: true});
+  var playingNotes = [];
+  var i;
 
   controller.loop(function(frame){
-    if(frame.fingers.length){
-      $x.text(frame.fingers[0].tipPosition[0]);
+    var fingersLength = frame.fingers.length;
+    if(fingersLength){
+      for(i=0; i<fingersLength; i++){
+        var finger = frame.fingers[i];
+
+        if(finger.tipPosition[1] > keyboardTop) {
+          playingNotes[finger.id] = null;
+          continue;
+        }
+
+        var volume = getVolume(finger);
+        if(volume !== null){
+          var note   = getNote(finger);
+          if(playingNotes[finger.id] === note){ continue; }
+
+          playingNotes[finger.id] = note;
+
+          play(note, volume);
+        }
+      }
     }
 
     if(!frame.gestures.length) { return; }
 
     var gesturesLength = frame.gestures.length;
-    for(var i=0; i<gesturesLength; i++){
+    for(i=0; i<gesturesLength; i++){
       var gesture = frame.gestures[i]
 
       switch(gesture.type){
-        case 'keyTap': onKeyTap(frame, gesture); break;
-        case 'swipe':  onSwipe(frame, gesture);  return;
         case 'circle': onCircle(frame, gesture); return;
       }
     }
   });
-}
-
-function onKeyTap(frame, gesture){
-  var volume = getVolume(frame.fingers, gesture);
-  var note   = getNote(gesture)
-
-  play(note, volume);
-}
-
-var prevNote;
-function onSwipe(frame, gesture){
-  var volume = getVolume(frame.fingers, gesture, 5);
-  var note   = getNote(gesture);
-
-  if(prevNote != note){
-    play(note, volume);
-    prevNote = note;
-  }
 }
 
 var score = [[60, 500], [60, 500], [67, 500], [67, 500], [69, 500], [69, 500], [67, 500], [67, 500],
@@ -91,21 +91,12 @@ function onCircle(frame, gesture){
 }
 
 var maxVolume = 127;
-function getVolume(fingers, gesture, weight){
-  weight = weight || 1;
+function getVolume(finger){
+  var velocity = finger.tipVelocity[1];
+  if(isNaN(velocity)) { return null; }
+  velocity = Math.abs(velocity);
 
-  var velocity, fingersLength  = fingers.length;
-  for(var i=0; i<fingersLength; i++){
-    var finger = fingers[i];
-    if(finger.id == gesture.pointableIds[0]){
-      velocity = finger.tipVelocity[1];
-      break;
-    }
-  }
-
-  if(isNaN(velocity)) { return maxVolume; }
-
-  var volume = velocity / 1000 * maxVolume * weight;
+  var volume = velocity / 300 * maxVolume;
   if(volume < 0)         { volume = 0; }
   if(volume > maxVolume) { volume = maxVolume; }
 
@@ -113,8 +104,8 @@ function getVolume(fingers, gesture, weight){
   return volume;
 }
 
-function getNote(gesture){
-  var x = gesture.position[0] + 256;
+function getNote(finger){
+  var x = finger.tipPosition[0] + 256;
   var keyWidth = 512 / notes.length;
 
   return notes[~~(x / keyWidth)];
