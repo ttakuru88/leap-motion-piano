@@ -1,8 +1,8 @@
-var Piano = (function(){
+var PianoView = (function(){
   var keyNum = 35;
   var halfNote = [true, false, true, true, false, true, true];
 
-  function Piano(id){
+  function PianoView(id){
     this.canvas = document.getElementById(id);
     this.ctx = this.canvas.getContext('2d');
     this.keyWidth = this.canvas.width / keyNum;
@@ -10,7 +10,7 @@ var Piano = (function(){
     this.renderKeys();
   }
 
-  Piano.prototype.renderKeys = function(){
+  PianoView.prototype.renderKeys = function(){
     this.ctx.save();
     this.ctx.strokeStyle = '#000';
     this.ctx.fillStyle   = '#000';
@@ -30,7 +30,7 @@ var Piano = (function(){
     this.ctx.restore();
   }
 
-  Piano.prototype.play = function(note){
+  PianoView.prototype.play = function(note){
     if(this.prevNote){
       this.drawArc(this.prevNote, '#ffffff', this.keyWidth * 0.4);
     }
@@ -39,7 +39,7 @@ var Piano = (function(){
     this.prevNote = note;
   }
 
-  Piano.prototype.drawArc = function(note, color, radius){
+  PianoView.prototype.drawArc = function(note, color, radius){
     this.ctx.save();
     this.ctx.fillStyle = color;
     this.ctx.beginPath();
@@ -48,5 +48,5 @@ var Piano = (function(){
     this.ctx.restore();
   }
 
-  return Piano;
+  return PianoView;
 })();
